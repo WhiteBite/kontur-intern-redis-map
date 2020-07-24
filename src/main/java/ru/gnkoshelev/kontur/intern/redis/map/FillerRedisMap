@@ -1,0 +1,128 @@
+package ru.whitebite.redis.map;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class FillerRedisMap {
+
+    static RedisMap redisMap;
+    static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    static String inputStr = "";
+    static int countKey = 0;
+
+    public static void initMenu() throws IOException {
+        while (true) {
+            System.out.println("|==========Init==menu========|");
+            System.out.println("| =====Enter the number===== |");
+            System.out.println("| 1 - Use Default Name Redis |");
+            System.out.println("| 2 -    Set Name Redis      |");
+            System.out.println("|============================|");
+            inputStr = reader.readLine();
+            switch (inputStr) {
+                case "1":
+                    redisMap = new RedisMap("Filler_redisMap");
+                    return;
+                case "2":
+                    inputStr = reader.readLine();
+                    String nameSpace = inputStr;
+                    System.out.println("|= Enter name: =|");
+                    redisMap = new RedisMap(nameSpace);
+                    return;
+                default:
+                    System.out.println("|= Choose one  of the items =|");
+                    break;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            initMenu();
+            menu();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void menu() throws IOException {
+        while (!inputStr.equals("end")) {
+            printHelp();
+            inputStr = reader.readLine();
+            switch (inputStr) {
+                case "1":
+                    add();
+                    break;
+                case "2":
+                    remove();
+                    break;
+                case "3":
+                    print();
+                    break;
+                case "4":
+                    printHelp();
+                    break;
+                case "5":
+                    redisMap.clear();
+                    break;
+                case "6":
+                    generateKeyValue();
+                    break;
+                case "7":
+                    return;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public static void add() throws IOException {
+        String key;
+        String value;
+        System.out.println("Input key: ");
+        key = reader.readLine();
+        System.out.println("Input value: ");
+        value = reader.readLine();
+        redisMap.put(key, value);
+        countKey++;
+        System.out.println("Success add!");
+    }
+
+    public static void remove() throws IOException {
+        String key;
+        System.out.println("Input key: ");
+        key = reader.readLine();
+        System.out.println("Input value: ");
+        redisMap.remove(key);
+        countKey--;
+        System.out.println("Success remove!");
+    }
+
+    public static void print() {
+
+        System.out.println("_________| " + redisMap.NameSpace + " |__________");
+
+
+        if (redisMap.isEmpty())
+            System.out.println("RedisMap is empty!");
+        else
+            redisMap.entrySet().forEach(System.out::println);
+        System.out.println("==============================================");
+    }
+
+    public static void printHelp() {
+        System.out.println("Input:");
+        System.out.println("1 - Add key:value");
+        System.out.println("2 - Remove by key");
+        System.out.println("3 - Print All");
+        System.out.println("4 - Print Help");
+        System.out.println("5 - ClearALL");
+        System.out.println("6 - Generate and add key:value");
+        System.out.println("7 - Exit");
+    }
+
+    public static void generateKeyValue() {
+        redisMap.put("key_gen_" + (++countKey), "value_gen_" + (++countKey));
+        System.out.println("Success add key_gen_" + countKey + ":" + "value_gen_" + (countKey));
+    }
+}
